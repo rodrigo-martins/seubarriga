@@ -1,8 +1,8 @@
-
 const getAll = (req, res) => {
-  const users = [
-    { name: 'John', email: 'email@email.com' }
-  ]
-  res.status(200).json(users)
+  req.locals.db('users').select()
+    .then(users => {
+      console.log(users)
+      res.status(200).json(users)
+    })
 }
 module.exports = { getAll }
