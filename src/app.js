@@ -1,18 +1,18 @@
+const port = 3002
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
-const knex = require('knex')
-const knexfile = require('../knexfile')
 
+// Middlewares
 app.use(bodyParser.json())
-app.use(function (req, res, next) {
-  req.locals = {
-    db: knex(knexfile.test)
-  }
-  next()
-})
 
+// Routes Modules
 const users = require('./routes/users')
+
+// Routes
+app.get('/', (_req, res) => { res.send('Seu Barriga API') })
 app.use('/users', users)
+
+app.listen(port, () => { console.log(`Running http://localhost:${port}`) })
 
 module.exports = app

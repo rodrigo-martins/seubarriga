@@ -1,10 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
-const { getAll } = require('../controllers/users/getAll')
-const { create } = require('../controllers/users/create')
+const { select, insert } = require('../controllers/users')
 
-router.get('/', getAll)
-router.post('/', create)
+router.get('/', select)
+router.post('/', insert)
 
 module.exports = router
