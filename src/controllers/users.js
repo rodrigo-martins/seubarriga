@@ -18,4 +18,4 @@ const insert = async (req, res) => {
   }
 }
 
-module.exports = { select, insert }
+module.exports = { insert, select }

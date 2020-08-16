@@ -8,10 +8,12 @@ app.use(bodyParser.json())
 
 // Routes Modules
 const users = require('./routes/users')
+const accounts = require('./routes/accounts')
 
 // Routes
 app.get('/', (_req, res) => { res.send('Seu Barriga API') })
 app.use('/users', users)
+app.use('/accounts', accounts)
 
 app.listen(port, () => { console.log(`Running http://localhost:${port}`) })
 
