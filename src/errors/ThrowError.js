@@ -1,5 +1,5 @@
 module.exports = function ThrowError (code) {
-  this.name = 'Throw Error'
+  this.name = 'ThrowError'
   this.code = code
   switch (code) {
     // TODO - Translate
@@ -27,8 +27,11 @@ module.exports = function ThrowError (code) {
     case 'users-insert-not-unique-email':
       this.message = 'Parameter unique email not found.'
       break
+    case 'users-select-first-not-found':
+      this.message = 'User not found.'
+      break
     default:
-      this.message = 'Ops...'
+      this.message = 'Ops...Something going wrong.'
       break
   }
 }

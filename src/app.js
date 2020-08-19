@@ -18,7 +18,7 @@ app.use('/accounts', accounts)
 // Errors
 app.use((error, _req, res, next) => {
   const { name, code, message } = error
-  if (name === 'Throw Error') {
+  if (name === 'ThrowError') {
     res.status(400).json({ code, message })
   } else {
     res.status(500).send(error)
