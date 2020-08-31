@@ -10,11 +10,10 @@ const select = async (_req, res, next) => {
   }
 }
 
-const selectFirst = async (req, res, next) => {
+const selectById = async (req, res, next) => {
   try {
     const { id } = req.params
     const user = await User.selectFirst({ id })
-    console.log(user)
     if (!user) throw new ThrowError('users-select-first-not-found')
     res.status(200).json(user)
   } catch (error) {
@@ -42,4 +41,4 @@ const getPasswordHash = (password) => {
   return bcrypt.hashSync(password, salt)
 }
 
-module.exports = { insert, select, selectFirst }
+module.exports = { insert, select, selectById }

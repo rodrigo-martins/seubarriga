@@ -1,4 +1,4 @@
-const port = 3002
+const port = 3000
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
@@ -7,11 +7,13 @@ const app = express()
 app.use(bodyParser.json())
 
 // Routes Modules
+const auth = require('./routes/auth')
 const users = require('./routes/users')
 const accounts = require('./routes/accounts')
 
 // Routes
 app.get('/', (_req, res) => { res.send('Seu Barriga API') })
+app.use('/auth', auth)
 app.use('/users', users)
 app.use('/accounts', accounts)
 
@@ -25,6 +27,9 @@ app.use((error, _req, res, next) => {
   }
   next(error)
 })
-app.listen(port, () => { console.log(`Running http://localhost:${port}`) })
+
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => { console.log(`Running http://localhost:${port}`) })
+}
 
 module.exports = app
