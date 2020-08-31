@@ -30,6 +30,9 @@ module.exports = function ThrowError (code) {
     case 'users-select-first-not-found':
       this.message = 'User not found.'
       break
+    case 'auth-signin-not-email/password':
+      this.message = 'User email/password invalid.'
+      break
     default:
       this.message = 'Ops...Something going wrong.'
       break
