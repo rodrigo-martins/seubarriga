@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt-nodejs')
 const User = require('../models/users')
 const ThrowError = require('../errors/ThrowError')
+
 const select = async (_req, res, next) => {
   try {
     const users = await User.select()

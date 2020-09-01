@@ -18,7 +18,6 @@ test('users-select-first', async () => {
   expect(res.status).toBe(200)
   expect(res.body).toHaveProperty('id')
   user.id = res.body.id
-  // delete user.password
   expect(res.body).toEqual(user)
 })
 
