@@ -1,10 +1,12 @@
 const port = 3000
 const express = require('express')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 const app = express()
 
 // Middlewares
 app.use(bodyParser.json())
+app.use(cors())
 
 // Routes Modules
 const auth = require('./routes/auth')
