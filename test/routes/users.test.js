@@ -4,8 +4,22 @@ const database = require('../../src/database/connection')
 const MAIN_ROUTE = '/users'
 const email = `${Date.now()}@email.com`
 
+let authorization
+
+beforeAll(async () => {
+  const email = `${Date.now()}@email.com`
+  const password = '123456'
+  const name = 'Get Token'
+  const user = { name, email, password }
+  await request(app).post('/auth/signup').send(user)
+  const response = await request(app).post('/auth/signin').send({ email, password })
+  authorization = `Bearer ${response.body.token}`
+})
+
 test('users-select', async () => {
-  const res = await request(app).get(MAIN_ROUTE)
+  const res = await request(app)
+    .get(MAIN_ROUTE)
+    .set('authorization', authorization)
   expect(res.status).toBe(200)
   expect(res.body).not.toHaveProperty('email')
   expect(res.body.length).toBeGreaterThanOrEqual(0)
@@ -14,7 +28,9 @@ test('users-select', async () => {
 test('users-select-first', async () => {
   const user = { name: 'Due', email: `${Date.now()}@email.com`, password: '123456' }
   const newUser = await database('users').insert(user, '*')
-  const res = await request(app).get(`${MAIN_ROUTE}/${newUser[0].id}`)
+  const res = await request(app)
+    .get(`${MAIN_ROUTE}/${newUser[0].id}`)
+    .set('authorization', authorization)
   expect(res.status).toBe(200)
   expect(res.body).toHaveProperty('id')
   user.id = res.body.id
@@ -25,16 +41,20 @@ test('users-select-first-not-found', async () => {
   const user = { name: 'Due', email: `${Date.now()}@email.com`, password: '123456' }
   const newUser = await database('users').insert(user, '*')
   await database('users').where({ id: newUser[0].id }).del()
-  const res = await request(app).get(`${MAIN_ROUTE}/${newUser[0].id}`)
+  const res = await request(app)
+    .get(`${MAIN_ROUTE}/${newUser[0].id}`)
+    .set('authorization', authorization)
   expect(res.status).toBe(400)
   expect(res.body.code).toBe('users-select-first-not-found')
 })
 
 test('users-insert', async () => {
   const user = { name: 'Due', email, password: '123456' }
-  const res = await request(app).post(MAIN_ROUTE).send(user)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(user)
+    .set('authorization', authorization)
   expect(res.status).toBe(201)
-  user.id = res.body.id
   expect(res.body).toHaveProperty('id')
   expect(res.body.name).toEqual(user.name)
   expect(res.body.email).toEqual(user.email)
@@ -43,38 +63,55 @@ test('users-insert', async () => {
 
 test('users-insert-password-encrypted', async () => {
   const user = { name: 'Due', email: `${Date.now()}@email.com`, password: '123456' }
-  const res = await request(app).post(MAIN_ROUTE).send(user)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(user)
+    .set('authorization', authorization)
   expect(res.status).toBe(201)
   const { id } = res.body
-  const userDB = await request(app).get(`${MAIN_ROUTE}/${id}`)
+  const userDB = await request(app)
+    .get(`${MAIN_ROUTE}/${id}`)
+    .set('authorization', authorization)
   expect(userDB.status).toBe(200)
   expect(userDB.body.password).not.toBe(user.password)
 })
 
 test('users-insert-not-name', async () => {
   const user = { email, password: '123456' }
-  const res = await request(app).post(MAIN_ROUTE).send(user)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(user)
+    .set('authorization', authorization)
   expect(res.status).toBe(400)
   expect(res.body.code).toBe('users-insert-not-name')
 })
 
 test('users-insert-not-email', async () => {
   const user = { name: 'John', password: '123456' }
-  const res = await request(app).post(MAIN_ROUTE).send(user)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(user)
+    .set('authorization', authorization)
   expect(res.status).toBe(400)
   expect(res.body.code).toBe('users-insert-not-email')
 })
 
 test('users-insert-not-password', async () => {
   const user = { name: 'John', email: `${Date.now()}@email.com` }
-  const res = await request(app).post(MAIN_ROUTE).send(user)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(user)
+    .set('authorization', authorization)
   expect(res.status).toBe(400)
   expect(res.body.code).toBe('users-insert-not-password')
 })
 
 test('users-insert-not-unique-email', async () => {
   const user = { name: 'Due', email, password: '123456' }
-  const res = await request(app).post(MAIN_ROUTE).send(user)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(user)
+    .set('authorization', authorization)
   expect(res.status).toBe(400)
   expect(res.body.code).toBe('users-insert-not-unique-email')
 })
