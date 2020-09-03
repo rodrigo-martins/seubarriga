@@ -9,8 +9,8 @@ app.use(bodyParser.json())
 app.use(cors())
 
 // Routes Modules
-const router = require('./router')
-app.use('/', router)
+const routes = require('./routes')
+app.use('/', routes)
 
 // Errors
 app.use((error, _req, res, next) => {
