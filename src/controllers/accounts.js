@@ -1,9 +1,10 @@
 const Accounts = require('../models/accounts')
 const ThrowError = require('../errors/ThrowError')
 
-const select = async (_req, res, next) => {
+const select = async (req, res, next) => {
   try {
-    const accounts = await Accounts.select()
+    const { id } = req.user
+    const accounts = await Accounts.select({ user_id: id })
     res.status(200).json(accounts)
   } catch (error) {
     next(error)
@@ -13,7 +14,8 @@ const select = async (_req, res, next) => {
 const selectById = async (req, res, next) => {
   try {
     const { id } = req.params
-    const accounts = await Accounts.select({ id })
+    const { id: userId } = req.user
+    const accounts = await Accounts.select({ id, user_id: userId })
     if (!accounts.length) throw new ThrowError('accounts-select-by-id-not-found')
     res.status(200).json(accounts[0])
   } catch (error) {
@@ -23,7 +25,11 @@ const selectById = async (req, res, next) => {
 
 const insert = async (req, res, next) => {
   try {
-    const accounts = await Accounts.insert(req.body)
+    const data = {
+      name: req.body.name,
+      user_id: req.user.id
+    }
+    const accounts = await Accounts.insert(data)
     res.status(201).json(accounts)
   } catch (error) {
     next(error)
