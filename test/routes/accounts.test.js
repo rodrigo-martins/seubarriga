@@ -2,7 +2,6 @@ const request = require('supertest')
 
 const app = require('../../src/app')
 const database = require('../../src/database/connection')
-const User = require('../../src/models/users')
 
 const MAIN_ROUTE = '/accounts'
 let user
