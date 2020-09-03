@@ -15,6 +15,9 @@ module.exports = function ThrowError (code) {
     case 'accounts-insert-not-user_id':
       this.message = 'Paramenter user_id not found.'
       break
+    case 'accounts-insert-not-same-name':
+      this.message = 'Account name already exist.'
+      break
     case 'users-insert-not-name':
       this.message = 'Parameter name not found.'
       break

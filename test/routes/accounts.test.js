@@ -33,8 +33,8 @@ beforeAll(async () => {
 })
 
 test('accounts-select', async () => {
-  const account = { name: '#Acc 1 test(accounts-select)', user_id: user.id }
-  const account2 = { name: '#Acc 2 test(accounts-select)', user_id: user2.id }
+  const account = { name: 'accounts-select', user_id: user.id }
+  const account2 = { name: 'accounts-select', user_id: user2.id }
   await database('accounts').insert([account, account2])
   const res = await request(app)
     .get(MAIN_ROUTE)
@@ -45,7 +45,7 @@ test('accounts-select', async () => {
 })
 
 test('accounts-insert', async () => {
-  const account = { name: '#Acc 1 test(accounts-insert)' }
+  const account = { name: 'accounts-insert' }
   const res = await request(app)
     .post(MAIN_ROUTE)
     .send(account)
@@ -62,8 +62,19 @@ test('accounts-insert-not-name', async () => {
   expect(res.body.code).toBe('accounts-insert-not-name')
 })
 
+test('accounts-insert-not-same-name', async () => {
+  const account = { name: 'accounts-insert-not-same-name', user_id: user.id }
+  await database('accounts').insert(account)
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .send(account)
+    .set('authorization', authorization)
+  expect(res.status).toBe(400)
+  expect(res.body.code).toBe('accounts-insert-not-same-name')
+})
+
 test.skip('accounts-insert-not-user_id', async () => {
-  const account = { name: '#Acc test(accounts-insert-not-user_id)' }
+  const account = { name: 'accounts-insert-not-user_id' }
   const res = await request(app)
     .post(MAIN_ROUTE)
     .send(account)
@@ -73,7 +84,7 @@ test.skip('accounts-insert-not-user_id', async () => {
 })
 
 test('accounts-select-by-id', async () => {
-  const account = { name: '#Acc test(accounts-select-by-id)', user_id: user.id }
+  const account = { name: 'accounts-select-by-id', user_id: user.id }
   const newAccount = await database('accounts').insert(account, '*')
   const res = await request(app)
     .get(`${MAIN_ROUTE}/${newAccount[0].id}`)
@@ -84,7 +95,7 @@ test('accounts-select-by-id', async () => {
 })
 
 test('accounts-select-by-id-not-found', async () => {
-  const account = { name: '#Acc test(accounts-select-by-id-not-found)', user_id: user.id }
+  const account = { name: 'accounts-select-by-id-not-found', user_id: user.id }
   const newAccount = await database('accounts').insert(account, '*')
   await database('accounts').where('id', newAccount[0].id).del()
   const res = await request(app)

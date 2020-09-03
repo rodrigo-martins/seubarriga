@@ -26,9 +26,12 @@ const selectById = async (req, res, next) => {
 const insert = async (req, res, next) => {
   try {
     const data = {
-      name: req.body.name,
+      name: req.body.name || null,
       user_id: req.user.id
     }
+    const accountDB = await Accounts.select(data)
+    if (accountDB.length) throw new ThrowError('accounts-insert-not-same-name')
+
     const accounts = await Accounts.insert(data)
     res.status(201).json(accounts)
   } catch (error) {
