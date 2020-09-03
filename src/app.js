@@ -9,15 +9,8 @@ app.use(bodyParser.json())
 app.use(cors())
 
 // Routes Modules
-const auth = require('./routes/auth')
-const users = require('./routes/users')
-const accounts = require('./routes/accounts')
-
-// Routes
-app.get('/', (_req, res) => { res.send('Seu Barriga API') })
-app.use('/auth', auth)
-app.use('/users', users)
-app.use('/accounts', accounts)
+const router = require('./router')
+app.use('/', router)
 
 // Errors
 app.use((error, _req, res, next) => {
