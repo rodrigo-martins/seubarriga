@@ -39,4 +39,45 @@ const insert = async (req, res, next) => {
   }
 }
 
-module.exports = { select, selectById, insert }
+const updateById = async (req, res, next) => {
+  try {
+    const { name } = req.body
+    const filter = {
+      id: req.params.id,
+      user_id: req.user.id
+    }
+    const accounts = await Accounts.update(filter, { name })
+    res.status(200).json(accounts)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const deleteById = async (req, res, next) => {
+  try {
+    const filter = {
+      id: req.params.id,
+      user_id: req.user.id
+    }
+    const account = await Accounts.del(filter)
+    res.status(200).json(account)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const owner = async (req, _res, next) => {
+  try {
+    const filter = {
+      id: req.params.id
+    }
+    const accountDB = await Accounts.select(filter)
+    if (!accountDB.length) throw new ThrowError('accounts-select-by-id-not-found')
+    if (accountDB[0].user_id !== req.user.id) throw new ThrowError('accounts-not-user-owner')
+    else next()
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { select, selectById, insert, updateById, deleteById, owner }

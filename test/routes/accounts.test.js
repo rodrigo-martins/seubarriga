@@ -104,3 +104,67 @@ test('accounts-select-by-id-not-found', async () => {
   expect(res.status).toBe(400)
   expect(res.body.code).toBe('accounts-select-by-id-not-found')
 })
+
+test('accounts-not-user-owner', async () => {
+  const account = { name: 'accounts-not-user-owner', user_id: user2.id }
+  const newAccount = await database('accounts').insert(account, '*')
+  const res = await request(app)
+    .get(`${MAIN_ROUTE}/${newAccount[0].id}`)
+    .set('authorization', authorization)
+  expect(res.status).toBe(400)
+  expect(res.body.code).toBe('accounts-not-user-owner')
+})
+
+test('accounts-update-by-id', async () => {
+  const account = { name: 'accounts-update-by-id', user_id: user.id }
+  const newAccount = await database('accounts').insert(account, '*')
+  const res = await request(app)
+    .put(`${MAIN_ROUTE}/${newAccount[0].id}`)
+    .send({ name: 'accounts-update-by-id-updated' })
+    .set('authorization', authorization)
+  expect(res.status).toBe(200)
+  expect(res.body.name).toBe('accounts-update-by-id-updated')
+})
+
+test('accounts-update-by-id-not-user-owner', async () => {
+  const account = { name: 'accounts-update-by-id', user_id: user2.id }
+  const newAccount = await database('accounts').insert(account, '*')
+  const res = await request(app)
+    .put(`${MAIN_ROUTE}/${newAccount[0].id}`)
+    .send({ name: 'accounts-update-by-id-updated' })
+    .set('authorization', authorization)
+  expect(res.status).toBe(400)
+  expect(res.body.code).toBe('accounts-not-user-owner')
+})
+
+test('accounts-delete-by-id', async () => {
+  const account = { name: 'accounts-delete-by-id', user_id: user.id }
+  const newAccount = await database('accounts').insert(account, '*')
+  const res = await request(app)
+    .delete(`${MAIN_ROUTE}/${newAccount[0].id}`)
+    .set('authorization', authorization)
+  expect(res.status).toBe(200)
+  expect(res.body).toBe(1)
+})
+
+test('accounts-delete-by-id-not-deleted', async () => {
+  const account = { name: 'accounts-delete-by-id-not-deleted', user_id: user.id }
+  const newAccount = await database('accounts').insert(account, '*')
+  await database('accounts').where('id', newAccount[0].id).del()
+  const res = await request(app)
+    .delete(`${MAIN_ROUTE}/${newAccount[0].id}`)
+    .set('authorization', authorization)
+  expect(res.status).toBe(400)
+  expect(res.body.code).toBe('accounts-select-by-id-not-found')
+})
+
+test('accounts-del-by-id-not-user-owner', async () => {
+  const account = { name: 'accounts-del-by-id-not-user-owner', user_id: user2.id }
+  const newAccount = await database('accounts').insert(account, '*')
+  const res = await request(app)
+    .delete(`${MAIN_ROUTE}/${newAccount[0].id}`)
+    .send({ name: 'accounts-del-by-id-not-user-owner' })
+    .set('authorization', authorization)
+  expect(res.status).toBe(400)
+  expect(res.body.code).toBe('accounts-not-user-owner')
+})

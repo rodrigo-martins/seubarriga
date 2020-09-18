@@ -37,6 +37,7 @@ const insert = async (req, res, next) => {
     next(error)
   }
 }
+
 const getPasswordHash = (password) => {
   const salt = bcrypt.genSaltSync(10)
   return bcrypt.hashSync(password, salt)
