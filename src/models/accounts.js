@@ -16,8 +16,6 @@ const update = async (filter, account) => {
 
 const select = async (filter = {}) => await database('accounts').where(filter).select()
 
-const del = async (filter) => {
-  return await database('accounts').where(filter).del()
-}
+const del = async (filter) => await database('accounts').where(filter).del()
 
 module.exports = { select, insert, update, del }
